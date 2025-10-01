@@ -29,9 +29,6 @@ h1 {
     border-right: 1px solid black;
 }
 
-/* .add-padding {
-    padding: 10px;
-} */
 
 .button-container {
     text-align: center;
@@ -93,7 +90,6 @@ tr {
     background-color: #F8F8F8;
 }
 
-/* Popup Overlay Styles */
 .popup-overlay {
     display: none;
     position: fixed;
@@ -156,7 +152,6 @@ tr {
     font-size: 16px;
 }
 
-/* Make date cells clickable */
 .center-item {
     cursor: pointer;
     transition: background-color 0.2s;

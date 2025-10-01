@@ -5,7 +5,6 @@ const closeBtn = document.getElementById('close-btn');
 const popupDate = document.getElementById('popup-date');
 const popupEvents = document.getElementById('popup-events');
 
-// Store current calendar data for popup
 let currentMonth = null;
 let currentYear = null;
 
@@ -19,7 +18,6 @@ button.addEventListener('click', function() {
         return;
     }
     
-    // Store current calendar data
     currentMonth = getMonth(month);
     currentYear = year;
     
@@ -149,7 +147,6 @@ function displayFirstRow(startDay) {
     return firstRow;
 }
 
-// Popup functionality
 function showPopup(day, month, year) {
     if (!day || day === '') return;
     
@@ -162,7 +159,6 @@ function showPopup(day, month, year) {
     
     popupOverlay.style.display = 'flex';
     
-    // Fetch historical events
     fetchHistoricalEvents(day, month, year);
 }
 
@@ -177,11 +173,9 @@ async function fetchHistoricalEvents(day, month, year) {
         const dateString = `${monthNames[month - 1]} ${day}, ${year}`;
         const query = `What major historical events happened on ${dateString}? Please provide 3-5 significant events that occurred specifically on this exact date and year. Do not include events from other years.`;
         
-        // Use PHP API to make the OpenAI call
         const response = await fetch(`api.php?query=${encodeURIComponent(query)}`);
         const events = await response.text();
         
-        // Format the events as a list
         const formattedEvents = formatEventsAsList(events);
         popupEvents.innerHTML = formattedEvents;
     } catch (error) {
@@ -191,18 +185,16 @@ async function fetchHistoricalEvents(day, month, year) {
 }
 
 function formatEventsAsList(eventsText) {
-    // Split the text into lines and filter out empty lines
     const lines = eventsText.split('\n').filter(line => line.trim() !== '');
     
     let html = '<ul>';
     
     lines.forEach(line => {
-        // Clean up the line and add as list item
         const cleanLine = line.trim()
-            .replace(/^[-•*]\s*/, '') // Remove bullet points if present
-            .replace(/^\d+\.\s*/, '') // Remove numbers like "1. " or "2. "
-            .replace(/^\d+\)\s*/, '') // Remove numbers like "1) " or "2) "
-            .replace(/^\(\d+\)\s*/, ''); // Remove numbers like "(1) " or "(2) "
+            .replace(/^[-•*]\s*/, '')
+            .replace(/^\d+\.\s*/, '')
+            .replace(/^\d+\)\s*/, '')
+            .replace(/^\(\d+\)\s*/, '');
         
         if (cleanLine) {
             html += `<li>${cleanLine}</li>`;
@@ -214,7 +206,6 @@ function formatEventsAsList(eventsText) {
     return html;
 }
 
-// Event listeners
 closeBtn.addEventListener('click', hidePopup);
 
 popupOverlay.addEventListener('click', function(e) {
@@ -223,7 +214,6 @@ popupOverlay.addEventListener('click', function(e) {
     }
 });
 
-// Add click handlers to calendar cells after they're created
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('center-item') && e.target.textContent.trim() !== '') {
         const day = parseInt(e.target.textContent);
@@ -236,7 +226,6 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Close popup with Escape key
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && popupOverlay.style.display === 'flex') {
         hidePopup();
