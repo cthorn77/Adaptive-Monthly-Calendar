@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <table>
+        <tr>
+            <td>
+                <h1>Adaptive Monthly Calendar</h1>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="sample-container">
+                <div class="center-container">
+                    <h2>Start Day</h2>
+                </div>
+                <div class="center-container">
+                    <h2>Month</h2>
+                </div>
+                <div class="center-container">
+                    <h2>Year</h2>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="input-container">
+                <div class="center-container add-padding">
+                    <select name="start-day" id="start-day" class="input-select">
+                        <option value="Mon">Mon</option>
+                        <option value="Tue">Tue</option>
+                        <option value="Wed">Wed</option>
+                        <option value="Thu">Thu</option>
+                        <option value="Fri">Fri</option>
+                        <option value="Sat">Sat</option>
+                        <option value="Sun">Sun</option>
+                    </select>
+                    <!-- <h3>Wed</h3> -->
+                </div>
+                <div class="center-container add-padding">
+                    <select name="month" id="month" class="input-select">
+                        <option value="January">Jan</option>
+                        <option value="February">Feb</option>
+                        <option value="March">Mar</option>
+                        <option value="April">Apr</option>
+                        <option value="May">May</option>
+                        <option value="June">Jun</option>
+                        <option value="July">Jul</option>
+                        <option value="August">Aug</option>
+                        <option value="September">Sep</option>
+                        <option value="October">Oct</option>
+                        <option value="November">Nov</option>
+                        <option value="December">Dec</option>
+                    </select>
+                    <!-- <h3>May</h3> -->
+                </div>
+                <div class="center-container add-padding">
+                    <input type="number" name="year" id="year" class="center-container" min="1900" max="2025" required>
+                    <!-- <h3>2023</h3> -->
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="button-container">
+                <button type="button" id="button">Submit</button>
+            </td>
+        </tr>
+
+        <tr id="calendar-container">
+            <td id="calendar">
+
+            </td>
+        </tr>
+    </table>
+</body>
+<script src="index.js"></script>
+</html>
