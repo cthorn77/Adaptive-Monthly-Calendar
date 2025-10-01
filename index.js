@@ -1,5 +1,13 @@
 const calendar = document.getElementById('calendar');
 const button = document.getElementById('button');
+const popupOverlay = document.getElementById('popup-overlay');
+const closeBtn = document.getElementById('close-btn');
+const popupDate = document.getElementById('popup-date');
+const popupEvents = document.getElementById('popup-events');
+
+// Store current calendar data for popup
+let currentMonth = null;
+let currentYear = null;
 
 button.addEventListener('click', function() {
     let startDay = document.getElementById('start-day').value;
@@ -10,6 +18,10 @@ button.addEventListener('click', function() {
         alert('Year must be between 1900 and 2025');
         return;
     }
+    
+    // Store current calendar data
+    currentMonth = getMonth(month);
+    currentYear = year;
     
     displayCalendar(startDay, getMonth(month), year);
 });
@@ -51,9 +63,9 @@ function displayCalendar(startDay, month, year) {
                 }
                 
                 if (col === 12) {
-                    calendar.innerHTML += `<p class="center-item add-top-border">${content}</p>`;
+                    calendar.innerHTML += `<p class="center-item add-top-border" data-day="${content}" data-month="${month}" data-year="${year}">${content}</p>`;
                 } else {
-                    calendar.innerHTML += `<p class="center-item add-top-border add-border">${content}</p>`;
+                    calendar.innerHTML += `<p class="center-item add-top-border add-border" data-day="${content}" data-month="${month}" data-year="${year}">${content}</p>`;
                 }
             } else {
                 calendar.innerHTML += '<p class="center-item add-top-border add-border"></p>';
@@ -136,3 +148,97 @@ function displayFirstRow(startDay) {
 
     return firstRow;
 }
+
+// Popup functionality
+function showPopup(day, month, year) {
+    if (!day || day === '') return;
+    
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                       "July", "August", "September", "October", "November", "December"];
+    
+    const dateString = `${monthNames[month - 1]} ${day}, ${year}`;
+    popupDate.textContent = `Historical Events on ${dateString}`;
+    popupEvents.innerHTML = '<p>Loading historical events...</p>';
+    
+    popupOverlay.style.display = 'flex';
+    
+    // Fetch historical events
+    fetchHistoricalEvents(day, month, year);
+}
+
+function hidePopup() {
+    popupOverlay.style.display = 'none';
+}
+
+async function fetchHistoricalEvents(day, month, year) {
+    try {
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+                           "July", "August", "September", "October", "November", "December"];
+        const dateString = `${monthNames[month - 1]} ${day}, ${year}`;
+        const query = `What major historical events happened on ${dateString}? Please provide 3-5 significant events that occurred specifically on this exact date and year. Do not include events from other years.`;
+        
+        // Use PHP API to make the OpenAI call
+        const response = await fetch(`api.php?query=${encodeURIComponent(query)}`);
+        const events = await response.text();
+        
+        // Format the events as a list
+        const formattedEvents = formatEventsAsList(events);
+        popupEvents.innerHTML = formattedEvents;
+    } catch (error) {
+        popupEvents.innerHTML = '<p>Sorry, unable to fetch historical events at this time.</p>';
+        console.error('Error fetching historical events:', error);
+    }
+}
+
+function formatEventsAsList(eventsText) {
+    // Split the text into lines and filter out empty lines
+    const lines = eventsText.split('\n').filter(line => line.trim() !== '');
+    
+    let html = '<ul>';
+    
+    lines.forEach(line => {
+        // Clean up the line and add as list item
+        const cleanLine = line.trim()
+            .replace(/^[-•*]\s*/, '') // Remove bullet points if present
+            .replace(/^\d+\.\s*/, '') // Remove numbers like "1. " or "2. "
+            .replace(/^\d+\)\s*/, '') // Remove numbers like "1) " or "2) "
+            .replace(/^\(\d+\)\s*/, ''); // Remove numbers like "(1) " or "(2) "
+        
+        if (cleanLine) {
+            html += `<li>${cleanLine}</li>`;
+        }
+    });
+    
+    html += '</ul>';
+    
+    return html;
+}
+
+// Event listeners
+closeBtn.addEventListener('click', hidePopup);
+
+popupOverlay.addEventListener('click', function(e) {
+    if (e.target === popupOverlay) {
+        hidePopup();
+    }
+});
+
+// Add click handlers to calendar cells after they're created
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('center-item') && e.target.textContent.trim() !== '') {
+        const day = parseInt(e.target.textContent);
+        const month = parseInt(e.target.dataset.month);
+        const year = parseInt(e.target.dataset.year);
+        
+        if (day && month && year) {
+            showPopup(day, month, year);
+        }
+    }
+});
+
+// Close popup with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && popupOverlay.style.display === 'flex') {
+        hidePopup();
+    }
+});
